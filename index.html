@@ -2,129 +2,131 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Showcase Countdown</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>BLOCK BREAKER: FRENZY</title>
     <style>
+        /* Compact, Optimized Style */
         body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
+            margin: 0; background: #0088cc; font-family: sans-serif;
+            color: white; display: flex; align-items: center; justify-content: center;
+            height: 100dvh; text-align: center; overflow: hidden;
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-            text-align: center;
+        /* Large 'CHEERING' Cloud Container */
+        .text-cloud-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10; padding: 2rem;
         }
 
-        #countdown {
-            display: flex;
-            gap: 20px;
-            text-align: center;
+        /* The SVG Text Cloud Shape */
+        .svg-cloud {
+            width: 100%; height: 100%; filter: drop-shadow(0px 8px 0px rgba(0,0,0,0.2));
+            z-index: 11;
         }
 
-        .time-box {
-            background-color: #1e1e1e;
-            border: 2px solid #333;
-            border-radius: 10px;
-            padding: 20px;
-            width: 80px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        /* Foreground Content (Title + Timer) */
+        .content {
+            position: relative; z-index: 20; color: #004488;
+            max-width: 90%;
         }
 
-        .number {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #4facfe;
+        /* Minimal Title Style */
+        h1 { margin: 0 0 10px 0; font-size: 1.5rem; text-transform: uppercase; font-weight: 900; }
+
+        /* The Simplified Timer String */
+        #timer-text { font-size: 2rem; font-weight: 700; margin-top: 5px; }
+
+        /* Background Cubes and Clouds */
+        .element {
+            position: fixed; top: 100vh; opacity: 0; z-index: 1;
+            font-size: 2rem;
         }
 
-        .label {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #aaaaaa;
-            margin-top: 5px;
+        /* Animation Keyframes (Minified) */
+        @keyframes cheer {
+            0%{transform: translateY(0); opacity: 0;}
+            10%{opacity: .8;}
+            90%{opacity: .8;}
+            100%{transform: translateY(-110vh) rotate(360deg); opacity: 0;}
         }
 
-        #expired-message {
-            display: none;
-            font-size: 3rem;
-            color: #00ff88;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-align: center;
-        }
+        /* CSS Variables to handle different shapes in JS */
+        .block { --anim: cheer 15s linear infinite; }
+        .cloud { --anim: cheer 20s linear infinite; opacity: 0.6 !important;}
+
+        .element.cheer { animation: var(--anim); }
+
     </style>
 </head>
 <body>
 
-    <h1 id="title">Showcase Drops In:</h1>
-    
-    <div id="countdown">
-        <div class="time-box">
-            <div class="number" id="days">00</div>
-            <div class="label">Days</div>
-        </div>
-        <div class="time-box">
-            <div class="number" id="hours">00</div>
-            <div class="label">Hours</div>
-        </div>
-        <div class="time-box">
-            <div class="number" id="minutes">00</div>
-            <div class="label">Minutes</div>
-        </div>
-        <div class="time-box">
-            <div class="number" id="seconds">00</div>
-            <div class="label">Seconds</div>
+    <div class="text-cloud-wrapper">
+        <svg class="svg-cloud" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 48A48 48 0 0 1 112 48A48 48 0 0 1 200 48L200 48A48 48 0 0 1 112 48A48 48 0 0 1 16 48Z" fill="white"/>
+        </svg>
+
+        <div class="content">
+            <h1>FRENZY IN:</h1>
+            <div id="timer-text">LOADING...</div>
         </div>
     </div>
 
-    <div id="expired-message">The Showcase is Live!</div>
-
     <script>
-        // Set the absolute target date (May 17, 2026 at 14:00:00 CDT)
-        // GMT-0500 forces the time zone to Central Daylight Time
-        const targetDate = new Date("May 17, 2026 14:00:00 GMT-0500").getTime();
+        // --- 1. MINIFIED TIMER LOGIC (MAY 17, 2:00 PM CDT) ---
+        // Compacted logic that handles the absolute target time.
+        const target = new Date("May 17, 2026 14:00:00 GMT-0500").getTime();
+        const tBox = document.getElementById("timer-text");
 
-        // Update the countdown every 1 second (1000 ms)
-        const countdownTimer = setInterval(function() {
-
-            // Get the user's exact current device time
+        function updateTimer() {
             const now = new Date().getTime();
+            const d = target - now;
 
-            // Find the distance between now and the target date
-            const distance = targetDate - now;
-
-            // Time calculations for days, hours, minutes, and seconds
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            // Output the results to the HTML elements
-            // We use .toString().padStart(2, '0') to keep the "09" format instead of just "9"
-            document.getElementById("days").innerHTML = days.toString().padStart(2, '0');
-            document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
-            document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
-            document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
-
-            // If the countdown is finished, clear the timer and update the UI
-            if (distance < 0) {
-                clearInterval(countdownTimer);
-                document.getElementById("title").style.display = "none";
-                document.getElementById("countdown").style.display = "none";
-                document.getElementById("expired-message").style.display = "block";
+            if (d < 0) {
+                tBox.innerHTML = "SHOWCASE LIVE!"; return;
             }
-        }, 1000); // 1000 milliseconds = 1 second
-    </script>
 
+            // Compact Math: Days, Hrs, Mins, Secs all calculated directly.
+            // Using template literals to keep formatting simple.
+            const days = Math.floor(d / (1000 * 60 * 60 * 24));
+            const hrs = Math.floor((d % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            const mins = Math.floor((d % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            const secs = Math.floor((d % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+            tBox.innerHTML = `${days}d ${hrs}h ${mins}m ${secs}s`;
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer(); // Initial Call
+
+        // --- 2. CHEERING ELEMENTS (CUBES + CLOUDS) ---
+        const elements = ['🟩', '🟦', '🟪', '☁️', '☁️']; // 3 Cubes, 2 Clouds
+        const container = document.body;
+
+        function createElement() {
+            const el = document.createElement('div');
+            // Assign type based on the array content (Cube or Cloud)
+            const content = elements[Math.floor(Math.random() * elements.length)];
+            el.className = `element ${content === '☁️' ? 'cloud' : 'block'} cheer`;
+            el.textContent = content;
+
+            // Random position and timing
+            el.style.left = `${Math.random() * 100}vw`;
+            el.style.animationDelay = `${Math.random() * 15}s`;
+            el.style.fontSize = `${1.5 + Math.random() * 1.5}rem`;
+
+            container.appendChild(el);
+
+            // Clean up to prevent memory bloat
+            el.addEventListener('animationend', () => el.remove());
+        }
+
+        // Generate dynamic background elements
+        for(let i = 0; i < 25; i++) {
+            createElement();
+        }
+        setInterval(createElement, 2000); // Add a new one regularly
+
+    </script>
 </body>
 </html>
