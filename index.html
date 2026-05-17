@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Showcase Countdown</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        #countdown {
+            display: flex;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .time-box {
+            background-color: #1e1e1e;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            width: 80px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #aaaaaa;
+            margin-top: 5px;
+        }
+
+        #expired-message {
+            display: none;
+            font-size: 3rem;
+            color: #00ff88;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="title">Showcase Drops In:</h1>
+    
+    <div id="countdown">
+        <div class="time-box">
+            <div class="number" id="days">00</div>
+            <div class="label">Days</div>
+        </div>
+        <div class="time-box">
+            <div class="number" id="hours">00</div>
+            <div class="label">Hours</div>
+        </div>
+        <div class="time-box">
+            <div class="number" id="minutes">00</div>
+            <div class="label">Minutes</div>
+        </div>
+        <div class="time-box">
+            <div class="number" id="seconds">00</div>
+            <div class="label">Seconds</div>
+        </div>
+    </div>
+
+    <div id="expired-message">The Showcase is Live!</div>
+
+    <script>
+        // Set the absolute target date (May 17, 2026 at 14:00:00 CDT)
+        // GMT-0500 forces the time zone to Central Daylight Time
+        const targetDate = new Date("May 17, 2026 14:00:00 GMT-0500").getTime();
+
+        // Update the countdown every 1 second (1000 ms)
+        const countdownTimer = setInterval(function() {
+
+            // Get the user's exact current device time
+            const now = new Date().getTime();
+
+            // Find the distance between now and the target date
+            const distance = targetDate - now;
+
+            // Time calculations for days, hours, minutes, and seconds
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Output the results to the HTML elements
+            // We use .toString().padStart(2, '0') to keep the "09" format instead of just "9"
+            document.getElementById("days").innerHTML = days.toString().padStart(2, '0');
+            document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
+
+            // If the countdown is finished, clear the timer and update the UI
+            if (distance < 0) {
+                clearInterval(countdownTimer);
+                document.getElementById("title").style.display = "none";
+                document.getElementById("countdown").style.display = "none";
+                document.getElementById("expired-message").style.display = "block";
+            }
+        }, 1000); // 1000 milliseconds = 1 second
+    </script>
+
+</body>
+</html>
